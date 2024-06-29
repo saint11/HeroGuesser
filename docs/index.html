@@ -5,17 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hero Guesser</title>
     <link rel="stylesheet" href="styles.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <h1>Dota 2 Hero Guesser!</h1>
+        <div id="guesses"></div>
+
         <div>
-          <input type="text" id="hero-input" placeholder="Type a hero name..." autocomplete="off">
-          <button id="guess-button">Guess</button>
+            <input type="text" id="hero-input" placeholder="Type a hero name..." autocomplete="off">
+            <button id="guess-button">Guess</button>
         </div>
         <ul id="suggestions"></ul>
-        <div id="guesses"></div>
     </div>
+    <footer>
+        <p>Version 0.1.1 - <a href="https://github.com/saint11/HeroGuesser/" target="_blank">GitHub</a> - Open Source</p>
+    </footer>
     <script src="script.js"></script>
 </body>
 </html>

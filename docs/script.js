@@ -73,21 +73,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-
       heroInput.addEventListener("keydown", (e) => {
-        if (e.key === "Up") {
-          suggestedIndex -= 1;
-          if (suggestedIndex < 0) {
-            suggestedIndex = 0;
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          if (suggestedIndex > 0) {
+            suggestedIndex -= 1;
+            updateSuggestionsHighlight();
           }
-
         }
       });
+
       heroInput.addEventListener("keydown", (e) => {
-        if (e.key === "Down") {
-          suggestedIndex += 1;
-          if (suggestedIndex >= suggestedHeroes.length) {
-            suggestedIndex = suggestedHeroes.length - 1;
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          if (suggestedIndex < suggestedHeroes.length - 1) {
+            suggestedIndex += 1;
+            updateSuggestionsHighlight();
           }
         }
       });
@@ -103,6 +104,18 @@ document.addEventListener("DOMContentLoaded", () => {
         addGuess();
       });
 
+      function updateSuggestionsHighlight() {
+        const suggestionItems = suggestions.querySelectorAll('li');
+        suggestionItems.forEach((item, index) => {
+            if (index === suggestedIndex) {
+                item.classList.add("highlighted");
+                item.scrollIntoView({ block: "nearest", behavior: "smooth" });
+            } else {
+                item.classList.remove("highlighted");
+            }
+        });
+    }
+
       function chooseRandomHero() {
         const randomIndex = Math.floor(Math.random() * heroes.length);
         chosenHero = heroes[randomIndex];
@@ -112,7 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
       function addGuess(hero = null) {
         if (!hero) {
           const firstSuggestion = suggestedHeroes[suggestedIndex];
-          console.log(suggestedHeroes);
           let heroName = heroInput.value.trim();
           if (firstSuggestion) {
             heroName = firstSuggestion;
@@ -126,7 +138,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         selectedHeroes.push(hero.localized_name);
-        console.log(selectedHeroes);
 
         // Clear the input field and set the placeholder to the last guessed hero
         heroInput.value = '';
@@ -163,6 +174,12 @@ document.addEventListener("DOMContentLoaded", () => {
         <div id="legs"><span>Legs:</span> ${hero.legs}</div>
         <div id="attack_range"><span>Attack Range:</span> ${hero.attack_range}</div>
     `;
+
+        // Fade the previous guess
+        const lastGuess = guessesContainer.querySelector('.guess');
+        if (lastGuess) {
+          lastGuess.classList.add('faded');
+        }
 
         guessDiv.appendChild(heroStatsDiv);
         guessesContainer.insertBefore(guessDiv, guessesContainer.firstChild);
