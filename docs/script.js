@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const resultContainer = document.getElementById("results");
   const gamelink = "https://saint11.github.io/HeroGuesser/";
 
-  const DELAY = 0.2;
+  const DELAY = 0.5;
 
   let selectedHeroes = [];
   let suggestedHeroes = [];
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(response => response.json())
     .then(data => {
       heroes = data;
-      chooseRandomHero();
+      chooseHero();
 
       heroInput.addEventListener("input", () => {
         const query = heroInput.value.toLowerCase();
@@ -122,12 +122,22 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
       }
-
-      function chooseRandomHero() {
-        const randomIndex = Math.floor(Math.random() * heroes.length);
+      function getDayOfYear() {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), 0, 0);
+        const diff = now - start;
+        const oneDay = 1000 * 60 * 60 * 24;
+        const day = Math.floor(diff / oneDay);
+        return day;
+    }
+    
+    function chooseHero() {
+        const dayOfYear = getDayOfYear();
+        const randomIndex = dayOfYear % heroes.length;
         chosenHero = heroes[randomIndex];
         console.log("Chosen Hero:", chosenHero.localized_name);
-      }
+    }
+    
 
       function addGuess(hero = null) {
         // Disable input and button
