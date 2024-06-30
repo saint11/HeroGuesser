@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       function chooseHero() {
         const urlParams = new URLSearchParams(window.location.search);
-        const isRandom = urlParams.get('random') === 'true';
+        isRandom = urlParams.get('random') === 'true';
 
         if (isRandom) {
             const randomIndex = Math.floor(Math.random() * heroes.length);
@@ -152,12 +152,14 @@ document.addEventListener("DOMContentLoaded", () => {
             randomText.style.fontSize = "0.5em";
             randomText.style.color = "#888";
             title.appendChild(randomText);
+    
+            console.log(chosenHero.localized_name);
+
         } else {
             const dayOfYear = getDayOfYear();
             const randomIndex = dayOfYear % heroes.length;
             chosenHero = heroes[randomIndex];
         }
-        
     }
 
 
@@ -301,7 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         stats += compareText(guessHero.primary_attr, chosenHero.primary_attr, guessDiv.querySelector('#primary_attr'));
         stats += compareText(guessHero.attack_type, chosenHero.attack_type, guessDiv.querySelector('#attack_type'));
-        stats += compareArray(guessHero.roles, chosenHero.roles, guessDiv.querySelector('#roles'));
+        stats += compareArrayIndividual(guessHero.roles, chosenHero.roles, guessDiv.querySelector('#roles'));
         stats += compareNumber(guessHero.base_armor, chosenHero.base_armor, guessDiv.querySelector('#base_armor'));
         stats += compareNumber(guessHero.base_str, chosenHero.base_str, guessDiv.querySelector('#base_str'));
         stats += compareNumber(guessHero.base_agi, chosenHero.base_agi, guessDiv.querySelector('#base_agi'));
@@ -312,18 +314,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
         suggestedStats.push(stats);
       }
-      function compareText(guessValue, actualValue, div) {
+
+      function compareArrayIndividual(guessArray, actualArray, div) {
         if (div) {
-          if (guessValue === actualValue) {
-            div.classList.add("correct");
-            return '🟩';
-          } else {
-            div.classList.add("incorrect");
-            return '🟥';
-          }
+            const matchCount = guessArray.filter(value => actualArray.includes(value)).length;
+            if (matchCount === actualArray.length && matchCount === guessArray.length) {
+                div.classList.add("correct");
+                return '🟩';
+            } else if (matchCount > 0) {
+                div.classList.add("partial");
+                const highlightedRoles = guessArray.map(value => {
+                    return actualArray.includes(value) ? `<span style="color: green;">${value}</span>` : value;
+                }).join(', ');
+                div.innerHTML = `<span>Roles:</span> ${highlightedRoles}`;
+                return '🟨';
+            } else {
+                div.classList.add("incorrect");
+                return '🟥';
+            }
         }
         return '🟥';
-      }
+    }
 
       function compareArray(guessArray, actualArray, div) {
         if (div) {
@@ -342,6 +353,18 @@ document.addEventListener("DOMContentLoaded", () => {
         return '🟥';
       }
 
+      function compareText(guessValue, actualValue, div) {
+        if (div) {
+          if (guessValue === actualValue) {
+            div.classList.add("correct");
+            return '🟩';
+          } else {
+            div.classList.add("incorrect");
+            return '🟥';
+          }
+        }
+        return '🟥';
+      }
       function compareNumber(guessValue, actualValue, div) {
         if (div) {
           if (guessValue === actualValue) {
@@ -420,11 +443,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       function copyToClipboard(container) {
-        const textToCopy = Array.from(container.querySelectorAll(".guess-result"))
+        let textToCopy = Array.from(container.querySelectorAll(".guess-result"))
           .map(guessDiv => Array.from(guessDiv.querySelectorAll(".result-block"))
             .map(block => block.textContent)
             .join(" "))
           .join("\n") + `\nI guessed the Dota 2 hero! Try it yourself at https://saint11.github.io/HeroGuesser/`; // Replace with your actual game URL
+        
+          if (isRandom){
+          textToCopy += `\nMy random hero was ${chosenHero.localized_name}`
+        }
         navigator.clipboard.writeText(textToCopy);
       }
 
