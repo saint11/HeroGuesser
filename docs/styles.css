@@ -93,7 +93,7 @@ h1 {
   padding: 10px 20px;
   font-size: 16px;
   border: none;
-  border-radius: 5px;
+  border-radius: 0 5px 5px 0;
   background-color: var(--secondary-color);
   color: var(--text-color);
   cursor: pointer;
@@ -164,6 +164,27 @@ h1 {
 .guess .hero-stats div span {
   font-weight: bold;
 }
+
+.diamond {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: var(--text-color);
+  transform: rotate(45deg);
+  outline: solid 2px;
+  outline-color: var(--text-color);
+  margin: 7px;
+}
+
+.incorrect .diamond{
+  outline-color: var(--incorrect-color);
+}
+
+.diamond.empty{
+  background-color: var(--background-color);
+  outline-color: var(--footer-text-color);
+}
+
 
 .correct {
   color: var(--highlight-color);
