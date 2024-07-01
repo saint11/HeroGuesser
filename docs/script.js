@@ -221,12 +221,8 @@ document.addEventListener("DOMContentLoaded", () => {
           { id: "gender", label: "Gender", value: hero.gender },
           { id: "difficulty", label: "Difficulty", value: createDiamonds(hero.difficulty) },
           { id: "weapon_type", label: "Weapon", value: hero.weapon_type },
-          // { id: "base_str", label: "Base Strength", value: hero.base_str },
-          // { id: "base_agi", label: "Base Agility", value: hero.base_agi },
-          // { id: "base_int", label: "Base Intelligence", value: hero.base_int },
-          { id: "roles", label: "Roles", value: hero.roles.join(', ') },
-          { id: "attack_type", label: "Attack Type", value: `${hero.attack_type} ${getAttackTypeIcon(hero.attack_type)}` },
-          { id: "attack_range", label: "Attack Range", value: `${hero.attack_range} ${getAttackTypeIcon(hero.attack_type)}` },
+          { id: "roles", label: false, value: hero.roles.join(', ') },
+          { id: "attack_range", label: "Attack Range", value: `${hero.attack_range} ${getAttackTypeIcon(hero.attack_type, chosenHero.attack_type)}` },
           { id: "base_armor", label: "Base Armor", value: hero.base_armor },
           { id: "move_speed", label: "Move Speed", value: hero.move_speed },
           { id: "legs", label: "Legs", value: hero.legs },
@@ -234,14 +230,19 @@ document.addEventListener("DOMContentLoaded", () => {
         stats.forEach((stat, index) => {
           const statDiv = document.createElement("div");
           statDiv.id = stat.id;
-          statDiv.innerHTML = `<span>${stat.label}:</span> ${stat.value}`;
+          if (stat.label) {
+            statDiv.innerHTML = `<span>${stat.label}:</span> ${stat.value}`;
+          }
+          else {
+            statDiv.innerHTML = `${stat.value}`;
+          }
           statDiv.classList.add("animate__animated", "animate__flipInX");
           statDiv.style.animationDelay = `${index * DELAY}s`;
           heroStatsDiv.appendChild(statDiv);
         });
 
         guessDiv.appendChild(heroStatsDiv);
-        guessesContainer.insertBefore(guessDiv, guessesContainer.firstChild);
+        guessesContainer.appendChild(guessDiv, guessesContainer.firstChild);
 
         compareStats(hero, chosenHero, guessDiv);
 
@@ -287,9 +288,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      function getAttackTypeIcon(attackType) {
-        const meleeIcon = 'img/melee.png';
-        const rangedIcon = 'img/ranged.png';
+      function getAttackTypeIcon(attackType, correct) {
+        let isCorrect = (attackType == correct) ? "_correct" : "_wrong";
+
+        const meleeIcon = `img/melee${isCorrect}.png`;
+        const rangedIcon = `img/ranged${isCorrect}.png`;
 
         if (attackType.toLowerCase() === 'melee') {
           return `<img src="${meleeIcon}" alt="Melee" style="width: 24px; height: 24px;">`;
@@ -308,15 +311,11 @@ document.addEventListener("DOMContentLoaded", () => {
         stats += compareText(guessHero.gender, chosenHero.gender, guessDiv.querySelector('#gender'));
         stats += compareNumber(guessHero.difficulty, chosenHero.difficulty, guessDiv.querySelector('#difficulty'));
         stats += compareText(guessHero.weapon_type, chosenHero.weapon_type, guessDiv.querySelector('#weapon_type'));
-        // stats += compareNumber(guessHero.base_str, chosenHero.base_str, guessDiv.querySelector('#base_str'));
-        // stats += compareNumber(guessHero.base_agi, chosenHero.base_agi, guessDiv.querySelector('#base_agi'));
-        // stats += compareNumber(guessHero.base_int, chosenHero.base_int, guessDiv.querySelector('#base_int'));
         stats += compareNumber(guessHero.move_speed, chosenHero.move_speed, guessDiv.querySelector('#move_speed'));
-        stats += compareText(guessHero.attack_type, chosenHero.attack_type, guessDiv.querySelector('#attack_type'));
+        stats += compareAttack(guessHero.attack_range, chosenHero.attack_range, guessHero.attack_type, chosenHero.attack_type, guessDiv.querySelector('#attack_range'));
         stats += compareArrayIndividual(guessHero.roles, chosenHero.roles, guessDiv.querySelector('#roles'));
         stats += compareNumber(guessHero.base_armor, chosenHero.base_armor, guessDiv.querySelector('#base_armor'));
         stats += compareNumber(guessHero.legs, chosenHero.legs, guessDiv.querySelector('#legs'));
-        stats += compareNumber(guessHero.attack_range, chosenHero.attack_range, guessDiv.querySelector('#attack_range'));
 
         suggestedStats.push(stats);
       }
@@ -332,7 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const highlightedRoles = guessArray.map(value => {
               return actualArray.includes(value) ? `<span style="color: green;">${value}</span>` : value;
             }).join(', ');
-            div.innerHTML = `<span>Roles:</span> ${highlightedRoles}`;
+            div.innerHTML = `${highlightedRoles}`;
             return '🟨';
           } else {
             div.classList.add("incorrect");
@@ -347,10 +346,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         for (let i = 0; i < 3; i++) {
           const diamond = document.createElement('div');
-          if (difficulty>i){
+          if (difficulty > i) {
             diamond.className = 'diamond';
           }
-          else{
+          else {
             diamond.className = 'diamond empty';
           }
 
@@ -388,6 +387,34 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
         return '🟥';
+      }
+
+      function compareAttack(guessAttackRange, actualAttackRange, guessType, actualType, div) {
+        if (div) {
+
+          if (guessAttackRange > actualAttackRange) {
+            div.innerHTML += ` ⬇️`;
+          }
+          else if (guessAttackRange < actualAttackRange) {
+            div.innerHTML += ` ⬆️`;
+          }
+
+          if (guessAttackRange == actualAttackRange && guessType == actualType) {
+            div.classList.add("correct");
+            return '🟩';
+          } else if (guessType == actualType) {
+            div.classList.add("partial");
+            return '🟨';
+          }
+          else if (guessAttackRange == actualAttackRange) {
+            div.classList.add("partial");
+            return '🟨';
+          }
+          else {
+            div.classList.add("incorrect");
+            return '🟥';
+          }
+        }
       }
 
       function compareNumber(guessValue, actualValue, div) {
