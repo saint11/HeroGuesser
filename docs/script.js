@@ -311,10 +311,10 @@ document.addEventListener("DOMContentLoaded", () => {
         stats += compareText(guessHero.gender, chosenHero.gender, guessDiv.querySelector('#gender'));
         stats += compareNumber(guessHero.difficulty, chosenHero.difficulty, guessDiv.querySelector('#difficulty'));
         stats += compareText(guessHero.weapon_type, chosenHero.weapon_type, guessDiv.querySelector('#weapon_type'));
-        stats += compareNumber(guessHero.move_speed, chosenHero.move_speed, guessDiv.querySelector('#move_speed'));
-        stats += compareAttack(guessHero.attack_range, chosenHero.attack_range, guessHero.attack_type, chosenHero.attack_type, guessDiv.querySelector('#attack_range'));
         stats += compareArrayIndividual(guessHero.roles, chosenHero.roles, guessDiv.querySelector('#roles'));
+        stats += compareAttack(guessHero.attack_range, chosenHero.attack_range, guessHero.attack_type, chosenHero.attack_type, guessDiv.querySelector('#attack_range'));
         stats += compareNumber(guessHero.base_armor, chosenHero.base_armor, guessDiv.querySelector('#base_armor'));
+        stats += compareNumber(guessHero.move_speed, chosenHero.move_speed, guessDiv.querySelector('#move_speed'));
         stats += compareNumber(guessHero.legs, chosenHero.legs, guessDiv.querySelector('#legs'));
 
         suggestedStats.push(stats);
@@ -507,6 +507,40 @@ document.addEventListener("DOMContentLoaded", () => {
         navigator.clipboard.writeText(textToCopy);
       }
 
+
+      // Function to fetch and display the changelog
+      async function fetchChangelog() {
+        const url = 'changelog.md'; // Path to your markdown file
+      
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error('Failed to fetch changelog');
+          }
+          const markdown = await response.text();
+          const converter = new showdown.Converter();
+          const html = converter.makeHtml(markdown);
+          document.getElementById('changelog-content').innerHTML = html;
+        } catch (error) {
+          console.error('Error fetching changelog:', error);
+          document.getElementById('changelog-content').innerHTML = '<p>Error loading changelog.</p>';
+        }
+      }
+
+      // Event listener for changelog button
+      document.getElementById('changelog-button').addEventListener('click', () => {
+        const changelogContent = document.getElementById('changelog-content');
+        if (changelogContent.style.display === 'none') {
+          fetchChangelog();
+          changelogContent.style.display = 'block';
+          document.getElementById('changelog-button').textContent = 'Hide Changelog';
+        } else {
+          changelogContent.style.display = 'none';
+          document.getElementById('changelog-button').textContent = 'Show Changelog';
+        }
+      });
+
     })
     .catch(error => console.error('Error fetching hero data:', error));
+
 });
