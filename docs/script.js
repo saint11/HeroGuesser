@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let suggestedIndex = 0;
   let heroes = [];
   let chosenHero = null;
+  let gg = false;
 
   // Fetch hero data from the JSON file
   fetch('dota2_heroes.json')
@@ -33,7 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const query = heroInput.value.toLowerCase();
         suggestions.innerHTML = '';
 
-        if (query) {
+        if (query == "gg") {
+          suggestedHeroes = [];
+        }
+        else if (query) {
           const exactMatches = [];
           const prefixMatches = [];
           const substringMatches = [];
@@ -169,12 +173,21 @@ document.addEventListener("DOMContentLoaded", () => {
         guessButton.disabled = true;
 
         if (!hero) {
-          const firstSuggestion = suggestedHeroes[suggestedIndex];
-          let heroName = heroInput.value.trim();
-          if (firstSuggestion) {
-            heroName = firstSuggestion;
+
+          // Player gave up
+          if (heroInput.value.toLowerCase() == "gg") {
+            hero = chosenHero;
+            gg = true;
           }
-          hero = heroes.find(h => h.localized_name.toLowerCase() === heroName.toLowerCase());
+
+          else {
+            const firstSuggestion = suggestedHeroes[suggestedIndex];
+            let heroName = heroInput.value.trim();
+            if (firstSuggestion) {
+              heroName = firstSuggestion;
+            }
+            hero = heroes.find(h => h.localized_name.toLowerCase() === heroName.toLowerCase());
+          }
         }
 
         if (!hero) {
@@ -479,7 +492,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         // Add the message with the link
         const shareMessage = document.createElement("p");
-        shareMessage.innerHTML = `I guessed the Dota 2 hero! Try it yourself at <a href="${gamelink}" target="_blank">${gamelink}</a>`;
+        if (gg) {
+          shareMessage.innerHTML = `GG! You gave up!`;
+        }
+        else {
+          shareMessage.innerHTML = `You guessed today's Dota 2 hero!`;
+        }
+
         shareMessage.classList.add("share-message");
         resultContainer.appendChild(shareMessage);
 
@@ -495,11 +514,29 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       function copyToClipboard(container) {
+        let guessText = "";
+        if (isRandom) {
+          if (!gg) {
+            guessText = `I guessed a random Dota 2 hero, ${chosenHero.localized_name}! Try it yourself at https://saint11.github.io/HeroGuesser/?random=true`;
+          }
+          else {
+            guessText = `I Gave up guessing a random Dota 2 hero, ${chosenHero.localized_name}! Try it yourself at https://saint11.github.io/HeroGuesser/?random=true`;
+          }
+        }
+        else{
+          if (!gg) {
+            guessText = `I guessed today's Dota 2 hero! Try it yourself at https://saint11.github.io/HeroGuesser/`;
+          }
+          else {
+            guessText = `I gave up guessing today's Dota 2 hero! Try it yourself at https://saint11.github.io/HeroGuesser/`;
+          }
+        }
+
         let textToCopy = Array.from(container.querySelectorAll(".guess-result"))
           .map(guessDiv => Array.from(guessDiv.querySelectorAll(".result-block"))
             .map(block => block.textContent)
             .join(" "))
-          .join("\n") + `\nI guessed the Dota 2 hero! Try it yourself at https://saint11.github.io/HeroGuesser/`; // Replace with your actual game URL
+          .join("\n") + guessText;
 
         if (isRandom) {
           textToCopy += `\nMy random hero was ${chosenHero.localized_name}`
@@ -511,7 +548,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Function to fetch and display the changelog
       async function fetchChangelog() {
         const url = 'changelog.md'; // Path to your markdown file
-      
+
         try {
           const response = await fetch(url);
           if (!response.ok) {
