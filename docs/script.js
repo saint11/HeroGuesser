@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const guessesContainer = document.getElementById("guesses");
   const resultContainer = document.getElementById("results");
   const randomHeroButton = document.getElementById("random-hero-button");
+  const instructions = document.getElementById("instructions");
 
   const gamelink = "https://saint11.github.io/HeroGuesser/";
 
@@ -197,6 +198,10 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
+        if (instructions) {
+          instructions.style.display = 'none';
+        }
+
         selectedHeroes.push(hero.localized_name);
 
         // Clear the input field and set the placeholder to the last guessed hero
@@ -256,6 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         guessDiv.appendChild(heroStatsDiv);
         guessesContainer.appendChild(guessDiv, guessesContainer.firstChild);
+        heroStatsDiv.scrollIntoView({ block: "end", behavior: "smooth" });
 
         compareStats(hero, chosenHero, guessDiv);
 
