@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let gg = false;
   let isRandom = false;
   let heroReported = "None";
+  let reportInitialized = false;
 
   // Fetch hero data from the JSON file
   fetch('dota2_heroes.json')
@@ -264,26 +265,29 @@ document.addEventListener("DOMContentLoaded", () => {
           { id: "legs", label: "Legs", value: hero.legs },
         ];
 
-        // Add dynamic fields for each stat
-        stats.forEach(stat => {
-          const fieldDiv = document.createElement('div');
-          fieldDiv.classList.add('feedback-field');
+        // Add dynamic fields for each stat on the report window
+        if (!reportInitialized) {
+          reportInitialized = true;
+          stats.forEach(stat => {
+            const fieldDiv = document.createElement('div');
+            fieldDiv.classList.add('feedback-field');
 
-          const radio = document.createElement('input');
-          radio.type = 'radio';
-          radio.id = `feedback-${stat.id}`;
-          radio.name = 'feedback-stat';
-          radio.value = stat.id;
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.id = `feedback-${stat.id}`;
+            radio.name = 'feedback-stat';
+            radio.value = stat.id;
 
-          const label = document.createElement('label');
-          label.htmlFor = `feedback-${stat.id}`;
-          label.textContent = `${stat.label ? stat.label : "Roles"}`; // I'm lazy, sorry
+            const label = document.createElement('label');
+            label.htmlFor = `feedback-${stat.id}`;
+            label.textContent = `${stat.label ? stat.label : "Roles"}`; // I'm lazy, sorry
 
-          fieldDiv.appendChild(radio);
-          fieldDiv.appendChild(label);
+            fieldDiv.appendChild(radio);
+            fieldDiv.appendChild(label);
 
-          dynamicFieldsContainer.appendChild(fieldDiv);
-        });
+            dynamicFieldsContainer.appendChild(fieldDiv);
+          });
+      }
 
         stats.forEach((stat, index) => {
           const statDiv = document.createElement("div");
