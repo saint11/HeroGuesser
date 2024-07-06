@@ -1,3 +1,5 @@
+import { submitFeedback } from './api.js';
+
 document.addEventListener("DOMContentLoaded", () => {
 
   const heroInput = document.getElementById("hero-input");
@@ -7,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const resultContainer = document.getElementById("results");
   const randomHeroButton = document.getElementById("random-hero-button");
   const instructions = document.getElementById("instructions");
+  const dynamicFieldsContainer = document.getElementById('dynamic-feedback-fields');
 
   const gamelink = "https://saint11.github.io/HeroGuesser/";
 
@@ -19,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let heroes = [];
   let chosenHero = null;
   let gg = false;
+  let isRandom = false;
+  let heroReported = "None";
 
   // Fetch hero data from the JSON file
   fetch('dota2_heroes.json')
@@ -222,6 +227,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const heroNameText = document.createElement("span");
         heroNameText.textContent = hero.localized_name;
         heroNameDiv.appendChild(heroNameText);
+
+        // Add feedback button with an icon and tooltip
+        const feedbackButton = document.createElement("button");
+        feedbackButton.classList.add("feedback-button");
+        feedbackButton.innerHTML = '<i class="fas fa-flag"></i>';
+        feedbackButton.title = "Report!";
+        const heroName = hero.localized_name;
+        feedbackButton.addEventListener("click", () => {
+          heroReported = heroName;
+          openFeedbackModal(hero.localized_name)
+        });
+        heroNameDiv.appendChild(feedbackButton);
+
         guessDiv.appendChild(heroNameDiv);
 
         const heroStatsDiv = document.createElement("div");
@@ -245,6 +263,28 @@ document.addEventListener("DOMContentLoaded", () => {
           { id: "move_speed", label: "Move Speed", value: hero.move_speed },
           { id: "legs", label: "Legs", value: hero.legs },
         ];
+
+        // Add dynamic fields for each stat
+        stats.forEach(stat => {
+          const fieldDiv = document.createElement('div');
+          fieldDiv.classList.add('feedback-field');
+
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.id = `feedback-${stat.id}`;
+          radio.name = 'feedback-stat';
+          radio.value = stat.id;
+
+          const label = document.createElement('label');
+          label.htmlFor = `feedback-${stat.id}`;
+          label.textContent = `${stat.label ? stat.label : "Roles"}`; // I'm lazy, sorry
+
+          fieldDiv.appendChild(radio);
+          fieldDiv.appendChild(label);
+
+          dynamicFieldsContainer.appendChild(fieldDiv);
+        });
+
         stats.forEach((stat, index) => {
           const statDiv = document.createElement("div");
           statDiv.id = stat.id;
@@ -287,6 +327,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
         hero = "";
         suggestions.innerHTML = '';
+      }
+
+      function openFeedbackModal(heroName) {
+        const modal = document.getElementById('feedback-modal');
+        const closeButton = modal.querySelector('.close-button');
+        const feedbackForm = document.getElementById('feedback-form');
+        suggestions.style.display = 'none';
+
+        // Set a hidden input with the hero name (optional, for backend use)
+        feedbackForm.innerHTML += `<input type="hidden" name="hero" value="${heroName}">`;
+
+        // Show the modal
+        modal.style.display = 'block';
+
+        // Event listener to close the modal
+        closeButton.addEventListener('click', () => {
+          modal.style.display = 'none';
+          suggestions.style.display = 'block';
+        });
+
+        // Close the modal when clicking outside of it
+        window.addEventListener('click', (event) => {
+          if (event.target === modal) {
+            modal.style.display = 'none';
+            suggestions.style.display = 'block';
+          }
+        });
       }
 
       function getPrimaryAttrIcon(primaryAttr) {
@@ -529,7 +596,7 @@ document.addEventListener("DOMContentLoaded", () => {
             guessText = `I Gave up guessing a random Dota 2 hero, ${chosenHero.localized_name}! Try it yourself at https://saint11.github.io/HeroGuesser/?random=true`;
           }
         }
-        else{
+        else {
           if (!gg) {
             guessText = `I guessed today's Dota 2 hero! Try it yourself at https://saint11.github.io/HeroGuesser/`;
           }
@@ -542,7 +609,7 @@ document.addEventListener("DOMContentLoaded", () => {
           .map(guessDiv => Array.from(guessDiv.querySelectorAll(".result-block"))
             .map(block => block.textContent)
             .join(" "))
-          .join("\n") + guessText;
+          .join("\n") + "\n" + guessText;
 
         if (isRandom) {
           textToCopy += `\nMy random hero was ${chosenHero.localized_name}`
@@ -583,6 +650,29 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
+      // Event listener to handle form submission
+      document.getElementById('feedback-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const feedbackForm = document.getElementById('feedback-form');
+        const formData = new FormData(feedbackForm);
+
+        const data = {
+          hero: heroReported,
+          feedback: formData.get('feedback'),
+          stat: formData.get('feedback-stat')
+        };
+
+        try {
+          const message = await submitFeedback(data);
+          alert(message);
+        } catch (error) {
+          alert(error.message);
+        }
+
+        document.getElementById('feedback-modal').style.display = 'none';
+        suggestions.style.display = 'block';
+      });
     })
     .catch(error => console.error('Error fetching hero data:', error));
 

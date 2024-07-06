@@ -1,5 +1,9 @@
 # Patch Notes
 
+## Version 0.1.12
+- Added the report button
+- Fixed line break when copying results
+
 ## Version 0.1.11
 - Visual changes and tweaks
 - Added basic instructions

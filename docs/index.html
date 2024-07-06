@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hero Guesser</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
 </head>
+
 
 <body>
     <div class="container">
@@ -43,16 +43,29 @@
 
     </div>
     <footer>
-        <p><button id="changelog-button">Show Patch Notes</button> Version 0.1.11 - <a
+        <p><button id="changelog-button">Show Patch Notes</button> Version 0.1.12 - <a
                 href="https://github.com/saint11/HeroGuesser/" target="_blank">GitHub</a> - Open Source, made by <a
                 href="https://saint11.org">Saint11</a> </p>
 
         <div id="changelog-content" style="display: none;"></div>
     </footer>
 
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Send Feedback</h2>
+            <form id="feedback-form">
+                <div id="dynamic-feedback-fields"></div>
+                <textarea id="feedback" name="feedback" rows="4" placeholder="Suggestion..." required></textarea>
+                <p><button class="submit-feedback-button" type="submit">Submit</button></p>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
-    <script src="script.js"></script>
+    
+    <script type="module" src="script.js"></script>
 </body>
 
 </html>
