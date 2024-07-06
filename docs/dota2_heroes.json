@@ -8555,7 +8555,7 @@
         ],
         "gender": "Male",
         "difficulty": "2",
-        "weapon_type": "Blunt"
+        "weapon_type": "Unarmed"
     },
     {
         "id": 86,
@@ -12021,7 +12021,7 @@
         ],
         "gender": "Male",
         "difficulty": "3",
-        "weapon_type": "Magical"
+        "weapon_type": "Blade"
     },
     {
         "id": 128,
