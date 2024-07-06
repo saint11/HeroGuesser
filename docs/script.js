@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const randomHeroButton = document.getElementById("random-hero-button");
   const instructions = document.getElementById("instructions");
   const dynamicFieldsContainer = document.getElementById('dynamic-feedback-fields');
+  const feedbackTitle = document.getElementById('feedback-title');
 
   const gamelink = "https://saint11.github.io/HeroGuesser/";
 
@@ -237,7 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const heroName = hero.localized_name;
         feedbackButton.addEventListener("click", () => {
           heroReported = heroName;
-          openFeedbackModal(hero.localized_name)
+          openFeedbackModal(heroReported)
         });
         heroNameDiv.appendChild(feedbackButton);
 
@@ -338,6 +339,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const closeButton = modal.querySelector('.close-button');
         const feedbackForm = document.getElementById('feedback-form');
         suggestions.style.display = 'none';
+
+        feedbackTitle.innerText = `Report ${heroName} for intentional feeding`;
 
         // Set a hidden input with the hero name (optional, for backend use)
         feedbackForm.innerHTML += `<input type="hidden" name="hero" value="${heroName}">`;
