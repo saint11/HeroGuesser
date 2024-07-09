@@ -1317,8 +1317,8 @@
             13232,
             11744
         ],
-        "gender": "Female",
-        "difficulty": "3",
+        "gender": "Unknown",
+        "difficulty": "2",
         "weapon_type": "Magical"
     },
     {
@@ -1522,7 +1522,7 @@
             18422
         ],
         "gender": "Male",
-        "difficulty": "2",
+        "difficulty": "1",
         "weapon_type": "Magical"
     },
     {
@@ -3362,7 +3362,7 @@
             5171
         ],
         "gender": "Male",
-        "difficulty": "3",
+        "difficulty": "2",
         "weapon_type": "Magical"
     },
     {
@@ -3868,7 +3868,7 @@
             23428
         ],
         "gender": "Female",
-        "difficulty": "3",
+        "difficulty": "2",
         "weapon_type": "Magical"
     },
     {
@@ -9879,8 +9879,8 @@
             18405
         ],
         "gender": "Male",
-        "difficulty": "3",
-        "weapon_type": "Blunt"
+        "difficulty": "2",
+        "weapon_type": "Other"
     },
     {
         "id": 99,
@@ -10999,7 +10999,7 @@
             5720
         ],
         "gender": "Male",
-        "difficulty": "3",
+        "difficulty": "2",
         "weapon_type": "Blade"
     },
     {
@@ -11102,7 +11102,7 @@
             20941
         ],
         "gender": "Unknown",
-        "difficulty": "3",
+        "difficulty": "2",
         "weapon_type": "Magical"
     },
     {
