@@ -7325,7 +7325,7 @@
         ],
         "gender": "Male",
         "difficulty": "2",
-        "weapon_type": "Blunt"
+        "weapon_type": "Blade"
     },
     {
         "id": 74,
@@ -12123,7 +12123,7 @@
         ],
         "gender": "Female",
         "difficulty": "1",
-        "weapon_type": "Blunt"
+        "weapon_type": "Other"
     },
     {
         "id": 129,
@@ -12225,7 +12225,7 @@
         ],
         "gender": "Male",
         "difficulty": "2",
-        "weapon_type": "Other"
+        "weapon_type": "Blade"
     },
     {
         "id": 135,
