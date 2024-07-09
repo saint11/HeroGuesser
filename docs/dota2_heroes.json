@@ -1728,7 +1728,7 @@
             25663
         ],
         "gender": "Male",
-        "difficulty": "3",
+        "difficulty": "2",
         "weapon_type": "Magical"
     },
     {
@@ -8655,7 +8655,7 @@
             50050
         ],
         "gender": "Male",
-        "difficulty": "2",
+        "difficulty": "3",
         "weapon_type": "Magical"
     },
     {
@@ -10589,7 +10589,7 @@
             20841
         ],
         "gender": "Male",
-        "difficulty": "3",
+        "difficulty": "2",
         "weapon_type": "Other"
     },
     {
