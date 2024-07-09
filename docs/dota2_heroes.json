@@ -2652,7 +2652,7 @@
             40365
         ],
         "gender": "Male",
-        "difficulty": "2",
+        "difficulty": "1",
         "weapon_type": "Magical"
     },
     {
@@ -3160,7 +3160,7 @@
             14610
         ],
         "gender": "Male",
-        "difficulty": "2",
+        "difficulty": "1",
         "weapon_type": "Blade"
     },
     {
@@ -7324,8 +7324,8 @@
             12639
         ],
         "gender": "Male",
-        "difficulty": "2",
-        "weapon_type": "Blade"
+        "difficulty": "1",
+        "weapon_type": "Unarmed"
     },
     {
         "id": 74,
@@ -8860,7 +8860,7 @@
         ],
         "gender": "Male",
         "difficulty": "2",
-        "weapon_type": "Blade"
+        "weapon_type": "Unarmed"
     },
     {
         "id": 89,
@@ -9677,7 +9677,7 @@
         ],
         "gender": "Male",
         "difficulty": "1",
-        "weapon_type": "Blunt"
+        "weapon_type": "Blade"
     },
     {
         "id": 97,
@@ -11854,7 +11854,7 @@
         "move_speed": 310,
         "turn_rate": 0.9,
         "cm_enabled": true,
-        "legs": 4,
+        "legs": 2,
         "day_vision": 1800,
         "night_vision": 800,
         "localized_name": "Hoodwink",
@@ -12427,7 +12427,7 @@
             12536
         ],
         "gender": "Female",
-        "difficulty": "1",
+        "difficulty": "2",
         "weapon_type": "Unarmed"
     },
     {

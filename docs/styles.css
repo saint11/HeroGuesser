@@ -9,7 +9,7 @@
   --partial-match-color: #FFB86C;
   --incorrect-color: #FF5555;
   --footer-text-color: #AAA;
-  --link-color: #4571a0;
+  --link-color: #c94379;
 }
 
 body {
@@ -417,4 +417,45 @@ textarea#feedback {
 
 #dynamic-feedback-fields {
   margin-bottom: 1em;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip:hover {
+  color: var(--text-color);
+}
+
+.tooltip:active {
+  color: var(--text-color);
+}
+
+.tooltiptext {
+  display: none;
+  position: absolute;
+  visibility: visible;
+  width: 220px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  z-index: 1000;
+  transition: opacity 0.3s;
+  font-size: 1em;
+}
+
+.tooltiptext ul {
+  list-style-type: disc; 
+  padding-left: 20px;
+  text-align: left;
+  margin-top: 5px;
+  font-size: 0.8em;
+}
+
+.tooltiptext li {
+  margin-bottom: 5px;
 }

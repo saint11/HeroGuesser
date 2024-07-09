@@ -1,6 +1,10 @@
 # Patch Notes
 
 ## Version 0.1.13
+- More hero fixes.
+- Added tooltips on some stats.
+
+## Version 0.1.13
 - Lots of heroes fixes.
 - Added disclaimer about the legs.
 

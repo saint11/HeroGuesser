@@ -253,19 +253,18 @@ document.addEventListener("DOMContentLoaded", () => {
           lastGuess.classList.add('old');
           lastGuess.classList.remove("animate__animated");
         }
-
         const stats = [
           { id: "primary_attr", label: "Attribute", value: `${getPrimaryAttrIcon(hero.primary_attr)}` },
           { id: "gender", label: "Gender", value: hero.gender },
           { id: "difficulty", label: "Difficulty", value: createDiamonds(hero.difficulty) },
-          { id: "weapon_type", label: "Weapon", value: hero.weapon_type },
+          { id: "weapon_type", label: "Weapon", value: hero.weapon_type, tooltip: "Possible weapon types are:<br><ul><li>Unarmed</li><li>Bow</li><li>Blunt</li><li>Blade (anything with an edge)</li><li>Magical</li><li>Other(guns, spit, etc)</li></ul>" },
           { id: "roles", label: false, value: hero.roles.join(', ') },
           { id: "attack_range", label: "Attack Range", value: `${hero.attack_range} ${getAttackTypeIcon(hero.attack_type, chosenHero.attack_type)}` },
           { id: "base_armor", label: "Base Armor", value: hero.base_armor },
           { id: "move_speed", label: "Move Speed", value: hero.move_speed },
-          { id: "legs", label: "Legs", value: hero.legs },
+          { id: "legs", label: "Legs", value: hero.legs, tooltip: "Do not count the mount, just the hero. Hands are not feet, even if the hero stands on them." },
         ];
-
+        
         // Add dynamic fields for each stat on the report window
         if (!reportInitialized) {
           reportInitialized = true;
@@ -288,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             dynamicFieldsContainer.appendChild(fieldDiv);
           });
-      }
+        }
 
         stats.forEach((stat, index) => {
           const statDiv = document.createElement("div");
@@ -299,6 +298,29 @@ document.addEventListener("DOMContentLoaded", () => {
           else {
             statDiv.innerHTML = `${stat.value}`;
           }
+
+          if (stat.tooltip) {
+            statDiv.classList.add('tooltip'); // Add a class for styling
+            statDiv.dataset.tooltip = stat.tooltip; // Store the tooltip text in a data attribute
+          
+            statDiv.addEventListener('mouseover', (event) => {
+              const tooltip = document.getElementById('global-tooltip');
+              tooltip.innerHTML = event.currentTarget.dataset.tooltip;
+              tooltip.style.display = 'block';
+            });
+          
+            statDiv.addEventListener('mousemove', (event) => {
+              const tooltip = document.getElementById('global-tooltip');
+              tooltip.style.left = (event.pageX + 10) + 'px'; // Position tooltip near the mouse cursor
+              tooltip.style.top = (event.pageY + 10) + 'px';
+            });
+          
+            statDiv.addEventListener('mouseout', () => {
+              const tooltip = document.getElementById('global-tooltip');
+              tooltip.style.display = 'none';
+            });
+          }
+
           statDiv.classList.add("animate__animated", "animate__flipInX");
           statDiv.style.animationDelay = `${index * DELAY}s`;
           heroStatsDiv.appendChild(statDiv);
