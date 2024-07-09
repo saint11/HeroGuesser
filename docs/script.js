@@ -258,7 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
           { id: "gender", label: "Gender", value: hero.gender },
           { id: "difficulty", label: "Difficulty", value: createDiamonds(hero.difficulty) },
           { id: "weapon_type", label: "Weapon", value: hero.weapon_type, tooltip: "Possible weapon types are:<br><ul><li>Unarmed</li><li>Bow</li><li>Blunt</li><li>Blade (anything with an edge)</li><li>Magical</li><li>Other(guns, spit, etc)</li></ul>" },
-          { id: "roles", label: false, value: hero.roles.join(', ') },
+          { id: "roles", label: false, value: hero.roles.join(', '), tooltip: "From Dota 2 official website"},
           { id: "attack_range", label: "Attack Range", value: `${hero.attack_range} ${getAttackTypeIcon(hero.attack_type, chosenHero.attack_type)}` },
           { id: "base_armor", label: "Base Armor", value: hero.base_armor },
           { id: "move_speed", label: "Move Speed", value: hero.move_speed },
