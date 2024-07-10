@@ -1,5 +1,12 @@
 # Patch Notes
 
+## Version 0.2
+- Changed stat **base armor** to **armor**. Now showing the armor on level 1.
+- Made wrong roles show up in red instead of yellow.
+- Added better disclaimers on report window.
+- Added a seeded random, if you send the random URL to someone they get the same hero as you.
+- Changed the random algorithm, which changed today's hero, sorry about that!
+
 ## Version 0.1.15
 - Added `[...]` to the end of the roles list if you match all, but still more.
 

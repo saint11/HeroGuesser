@@ -1421,7 +1421,7 @@
         ],
         "gender": "Male",
         "difficulty": "2",
-        "weapon_type": "Blunt"
+        "weapon_type": "Blade"
     },
     {
         "id": 15,
@@ -2447,7 +2447,7 @@
             28252
         ],
         "gender": "Female",
-        "difficulty": "2",
+        "difficulty": "1",
         "weapon_type": "Magical"
     },
     {
@@ -2755,7 +2755,7 @@
             23765
         ],
         "gender": "Male",
-        "difficulty": "2",
+        "difficulty": "1",
         "weapon_type": "Blunt"
     },
     {
@@ -10183,7 +10183,7 @@
             25075
         ],
         "gender": "Male",
-        "difficulty": "2",
+        "difficulty": "1",
         "weapon_type": "Magical"
     },
     {
@@ -12224,7 +12224,7 @@
             15661
         ],
         "gender": "Male",
-        "difficulty": "2",
+        "difficulty": "1",
         "weapon_type": "Blade"
     },
     {

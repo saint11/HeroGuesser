@@ -43,6 +43,7 @@ h1 {
   width: 100%;
   margin: auto;
   margin-top: 10px;
+  padding-bottom: 50px;
 }
 /* Media query to remove margin-top on small screens */
 @media (max-width: 600px) {
@@ -136,7 +137,7 @@ h1 {
 }
 
 .hero-stats {
-  margin-top: 20px;
+  margin-top: 10px;
   background-color: #333;
   padding: 10px;
   border-radius: 5px;
@@ -339,6 +340,22 @@ button#changelog-button {
   font-size: 1.1em;
 }
 
+#feedback-disclaimer {
+  display: block;
+  font-size: 0.8em;
+  background-color: var(--incorrect-color);
+  color: var(--background-color);
+  padding: 5px;
+  margin: 5px;
+  display: none;
+  border-radius: 10px;
+}
+
+#feedback-disclaimer ul {
+  margin: 5px;
+  padding-left: 20px;
+}
+
 .feedback-button {
   color: var(--incorrect-color);
   background-color: var(--background-color);
@@ -373,7 +390,7 @@ button#changelog-button {
 .modal-content {
   color: var(--background-color);
   background-color: var(--faded-color);
-  margin: 5% auto; 
+  margin: 2% auto; 
   padding: 20px;
   border: 1px solid var(--background-color);
   width: 80%; 

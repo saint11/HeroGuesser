@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const resultContainer = document.getElementById("results");
   const randomHeroButton = document.getElementById("random-hero-button");
   const instructions = document.getElementById("instructions");
-  const dynamicFieldsContainer = document.getElementById('dynamic-feedback-fields');
   const feedbackTitle = document.getElementById('feedback-title');
 
   const gamelink = "https://saint11.github.io/HeroGuesser/";
@@ -23,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let heroes = [];
   let chosenHero = null;
   let gg = false;
-  let isRandom = false;
+  let seededRandom = -1;
   let heroReported = "None";
   let reportInitialized = false;
 
@@ -35,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
       chooseHero();
 
       randomHeroButton.addEventListener("click", () => {
-        window.location.href = `${window.location.pathname}?random=true`;
+        window.location.href = `${window.location.pathname}?random=${getLargeRandomInt()}`;
       });
 
       heroInput.addEventListener("input", () => {
@@ -140,22 +139,58 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
       }
-      function getDayOfYear() {
-        const now = new Date();
-        const start = new Date(now.getFullYear(), 0, 0);
-        const diff = now - start;
-        const oneDay = 1000 * 60 * 60 * 24;
-        const day = Math.floor(diff / oneDay);
-        return day;
+
+      // Helper function to get the day count from January 1st, 2024
+      function getDayCountFrom2024() {
+        const startDate = new Date("2024-01-01");
+        const today = new Date();
+        const timeDiff = today - startDate;
+        const dayCount = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        return dayCount;
+      }
+
+      // Linear Congruential Generator (LCG)
+      function LCG(seed) {
+        const a = 1664525;
+        const c = 1013904223;
+        const m = 2 ** 32;
+        seed = (a * seed + c) % m;
+        return seed;
+      }
+
+      // Function to get a hero deterministically
+      function getHero(seed) {
+        // Generate the random index without shuffling
+        let indices = [];
+        for (let i = 0; i < heroes.length; i++) {
+          seed = LCG(seed);
+          indices.push(seed % heroes.length);
+        }
+
+        // Remove duplicates to ensure all heroes are chosen once
+        indices = [...new Set(indices)];
+
+        // If all heroes have been chosen, start over with the remaining days
+        if (indices.length < heroes.length) {
+          for (let i = 0; i < heroes.length; i++) {
+            if (!indices.includes(i)) {
+              indices.push(i);
+            }
+          }
+        }
+
+        // Get the hero for the current day
+        const todayIndex = seed % heroes.length;
+        const chosenHero = heroes[indices[todayIndex]];
+        return chosenHero;
       }
 
       function chooseHero() {
         const urlParams = new URLSearchParams(window.location.search);
-        isRandom = urlParams.get('random') === 'true';
+        seededRandom = urlParams.get('random');
 
-        if (isRandom) {
-          const randomIndex = Math.floor(Math.random() * heroes.length);
-          chosenHero = heroes[randomIndex];
+        if (seededRandom > 0) {
+          chosenHero = getHero(seededRandom);
 
           // Add "(random!)" text under the title
           const title = document.querySelector("h1");
@@ -167,13 +202,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
           console.log(chosenHero.localized_name);
 
-        } else {
-          const dayOfYear = getDayOfYear();
-          const randomIndex = dayOfYear % heroes.length;
-          chosenHero = heroes[randomIndex];
+        }
+        else {
+          chosenHero = chosenHero = getHero(getDayCountFrom2024());
         }
       }
 
+      function getLargeRandomInt(){
+        return Math.floor(Math.random() * 20000);
+      }
 
       function addGuess(hero = null) {
         // Disable input and button
@@ -257,37 +294,13 @@ document.addEventListener("DOMContentLoaded", () => {
           { id: "primary_attr", label: "Attribute", value: `${getPrimaryAttrIcon(hero.primary_attr)}` },
           { id: "gender", label: "Gender", value: hero.gender },
           { id: "difficulty", label: "Difficulty", value: createDiamonds(hero.difficulty) },
-          { id: "weapon_type", label: "Weapon", value: hero.weapon_type, tooltip: "Possible weapon types are:<br><ul><li>Unarmed</li><li>Bow</li><li>Blunt</li><li>Blade (anything with an edge)</li><li>Magical</li><li>Other(guns, spit, etc)</li></ul>" },
-          { id: "roles", label: false, value: hero.roles.join(', '), tooltip: "From Dota 2 official website"},
+          { id: "weapon_type", label: "Weapon", value: hero.weapon_type, tooltip: "<p>Possible weapon types are:</p><br><ul><li>Unarmed</li><li>Bow</li><li>Blunt</li><li>Blade (anything with an edge)</li><li>Magical</li><li>Other(guns, spit, etc)</li></ul>" },
+          { id: "roles", label: false, value: hero.roles.join(', '), tooltip: "From Dota 2 official website" },
           { id: "attack_range", label: "Attack Range", value: `${hero.attack_range} ${getAttackTypeIcon(hero.attack_type, chosenHero.attack_type)}` },
-          { id: "base_armor", label: "Base Armor", value: hero.base_armor },
+          { id: "armor", label: "Armor", value: (hero.base_armor + hero.base_agi * 0.167).toFixed(1), tooltip: "Armor at level 1 without any bonuses." },
           { id: "move_speed", label: "Move Speed", value: hero.move_speed },
-          { id: "legs", label: "Legs", value: hero.legs, tooltip: "Do not count the mount, just the hero. Hands are not feet, even if the hero stands on them." },
+          { id: "legs", label: "Legs", value: hero.legs },
         ];
-        
-        // Add dynamic fields for each stat on the report window
-        if (!reportInitialized) {
-          reportInitialized = true;
-          stats.forEach(stat => {
-            const fieldDiv = document.createElement('div');
-            fieldDiv.classList.add('feedback-field');
-
-            const radio = document.createElement('input');
-            radio.type = 'radio';
-            radio.id = `feedback-${stat.id}`;
-            radio.name = 'feedback-stat';
-            radio.value = stat.id;
-
-            const label = document.createElement('label');
-            label.htmlFor = `feedback-${stat.id}`;
-            label.textContent = `${stat.label ? stat.label : "Roles"}`; // I'm lazy, sorry
-
-            fieldDiv.appendChild(radio);
-            fieldDiv.appendChild(label);
-
-            dynamicFieldsContainer.appendChild(fieldDiv);
-          });
-        }
 
         stats.forEach((stat, index) => {
           const statDiv = document.createElement("div");
@@ -302,19 +315,19 @@ document.addEventListener("DOMContentLoaded", () => {
           if (stat.tooltip) {
             statDiv.classList.add('tooltip'); // Add a class for styling
             statDiv.dataset.tooltip = stat.tooltip; // Store the tooltip text in a data attribute
-          
+
             statDiv.addEventListener('mouseover', (event) => {
               const tooltip = document.getElementById('global-tooltip');
               tooltip.innerHTML = event.currentTarget.dataset.tooltip;
               tooltip.style.display = 'block';
             });
-          
+
             statDiv.addEventListener('mousemove', (event) => {
               const tooltip = document.getElementById('global-tooltip');
               tooltip.style.left = (event.pageX + 10) + 'px'; // Position tooltip near the mouse cursor
               tooltip.style.top = (event.pageY + 10) + 'px';
             });
-          
+
             statDiv.addEventListener('mouseout', () => {
               const tooltip = document.getElementById('global-tooltip');
               tooltip.style.display = 'none';
@@ -359,13 +372,10 @@ document.addEventListener("DOMContentLoaded", () => {
       function openFeedbackModal(heroName) {
         const modal = document.getElementById('feedback-modal');
         const closeButton = modal.querySelector('.close-button');
-        const feedbackForm = document.getElementById('feedback-form');
+
         suggestions.style.display = 'none';
 
         feedbackTitle.innerText = `Report ${heroName} for intentional feeding`;
-
-        // Set a hidden input with the hero name (optional, for backend use)
-        feedbackForm.innerHTML += `<input type="hidden" name="hero" value="${heroName}">`;
 
         // Show the modal
         modal.style.display = 'block';
@@ -383,6 +393,58 @@ document.addEventListener("DOMContentLoaded", () => {
             suggestions.style.display = 'block';
           }
         });
+
+        // Add dynamic fields for each stat on the report window
+        if (!reportInitialized) {
+          reportInitialized = true;
+          const dynamicFieldsContainer = document.getElementById('dynamic-feedback-fields');
+
+          const stats = [
+            { id: "primary_attr", label: "Attribute" },
+            { id: "gender", label: "Gender" },
+            { id: "difficulty", label: "Difficulty" },
+            { id: "weapon_type", label: "Weapon", disclaimer: "Possible weapon types are:<br><ul><li>Unarmed</li><li>Bow</li><li>Blunt</li><li>Blade (anything with an edge)</li><li>Magical</li><li>Other(guns, spit, etc)</li></ul>" },
+            { id: "roles", label: "Roles", disclaimer: "Values directly from Dota 2 official website. (I also don't agree with some)" },
+            { id: "attack_range", label: "Attack Range", },
+            { id: "armor", label: "Armor", disclaimer: "Armor at level 1 without any bonuses." },
+            { id: "move_speed", label: "Move Speed" },
+            {
+              id: "legs", label: "Legs", disclaimer: `<ul><li>Legs do NOT count the mount (horse, lizard), just the hero.
+  <li>Legs do NOT count hands, even if the hero stands on it. If it has opposing thumbs, it doesn't count.
+  <li>Underlord do not have 4 legs, he has 4 arms, 2 legs. Don't fight me, fight Valve</ul>` },
+          ];
+
+          stats.forEach(stat => {
+            const fieldDiv = document.createElement('div');
+            fieldDiv.classList.add('feedback-field');
+
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.id = `feedback-${stat.id}`;
+            radio.name = 'feedback-stat';
+            radio.value = stat.id;
+
+            const label = document.createElement('label');
+            label.htmlFor = `feedback-${stat.id}`;
+            label.textContent = `${stat.label}`;
+
+            fieldDiv.appendChild(radio);
+            fieldDiv.appendChild(label);
+
+            dynamicFieldsContainer.appendChild(fieldDiv);
+
+            // Add event listener for the radio button
+            radio.addEventListener('change', () => {
+              const feedbackDisclaimer = document.getElementById('feedback-disclaimer');
+              if (stat.disclaimer) {
+                feedbackDisclaimer.style.display = 'block';
+                feedbackDisclaimer.innerHTML = `${stat.disclaimer}`;
+              } else {
+                feedbackDisclaimer.style.display = 'none';
+              }
+            });
+          });
+        }
       }
 
       function getPrimaryAttrIcon(primaryAttr) {
@@ -428,7 +490,7 @@ document.addEventListener("DOMContentLoaded", () => {
         stats += compareText(guessHero.weapon_type, chosenHero.weapon_type, guessDiv.querySelector('#weapon_type'));
         stats += compareArrayIndividual(guessHero.roles, chosenHero.roles, guessDiv.querySelector('#roles'));
         stats += compareAttack(guessHero.attack_range, chosenHero.attack_range, guessHero.attack_type, chosenHero.attack_type, guessDiv.querySelector('#attack_range'));
-        stats += compareNumber(guessHero.base_armor, chosenHero.base_armor, guessDiv.querySelector('#base_armor'));
+        stats += compareNumber(guessHero.armor, chosenHero.armor, guessDiv.querySelector('#armor'));
         stats += compareNumber(guessHero.move_speed, chosenHero.move_speed, guessDiv.querySelector('#move_speed'));
         stats += compareNumber(guessHero.legs, chosenHero.legs, guessDiv.querySelector('#legs'));
 
@@ -442,14 +504,14 @@ document.addEventListener("DOMContentLoaded", () => {
             div.classList.add("correct");
             return '🟩';
           } else if (matchCount > 0) {
-            div.classList.add("partial");
+            div.classList.add("incorrect");
             const highlightedRoles = guessArray.map(value => {
               return actualArray.includes(value) ? `<span style="color: green;">${value}</span>` : value;
             }).join(', ');
-            if (actualArray.length != guessArray.length && matchCount == guessArray.length){
+            if (actualArray.length != guessArray.length && matchCount == guessArray.length) {
               div.innerHTML = `${highlightedRoles}, <span>[...]</span>`;
             }
-            else{
+            else {
               div.innerHTML = `${highlightedRoles}`;
             }
             return '🟨';
@@ -622,20 +684,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
       function copyToClipboard(container) {
         let guessText = "";
-        if (isRandom) {
+        if (seededRandom>0) {
           if (!gg) {
-            guessText = `I guessed a random Dota 2 hero, ${chosenHero.localized_name}! Try it yourself at https://saint11.github.io/HeroGuesser/?random=true`;
+            guessText = `I guessed a random Dota 2 hero!\nttps://saint11.github.io/HeroGuesser/?random=${getLargeRandomInt()}`;
           }
           else {
-            guessText = `I Gave up guessing a random Dota 2 hero, ${chosenHero.localized_name}! Try it yourself at https://saint11.github.io/HeroGuesser/?random=true`;
+            guessText = `I Gave up guessing a random Dota 2 hero!\nttps://saint11.github.io/HeroGuesser/?random=${getLargeRandomInt()}`;
           }
         }
         else {
           if (!gg) {
-            guessText = `I guessed today's Dota 2 hero! Try it yourself at https://saint11.github.io/HeroGuesser/`;
+            guessText = `I guessed today's Dota 2 hero!\nhttps://saint11.github.io/HeroGuesser/`;
           }
           else {
-            guessText = `I gave up guessing today's Dota 2 hero! Try it yourself at https://saint11.github.io/HeroGuesser/`;
+            guessText = `I gave up guessing today's Dota 2 hero!\nhttps://saint11.github.io/HeroGuesser/`;
           }
         }
 
@@ -645,9 +707,6 @@ document.addEventListener("DOMContentLoaded", () => {
             .join(" "))
           .join("\n") + "\n" + guessText;
 
-        if (isRandom) {
-          textToCopy += `\nMy random hero was ${chosenHero.localized_name}`
-        }
         navigator.clipboard.writeText(textToCopy);
       }
 
