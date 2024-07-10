@@ -446,7 +446,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const highlightedRoles = guessArray.map(value => {
               return actualArray.includes(value) ? `<span style="color: green;">${value}</span>` : value;
             }).join(', ');
-            div.innerHTML = `${highlightedRoles}`;
+            if (actualArray.length != guessArray.length && matchCount == guessArray.length){
+              div.innerHTML = `${highlightedRoles}, <span>[...]</span>`;
+            }
+            else{
+              div.innerHTML = `${highlightedRoles}`;
+            }
             return '🟨';
           } else {
             div.classList.add("incorrect");

@@ -1,6 +1,9 @@
 # Patch Notes
 
-## Version 0.1.13
+## Version 0.1.15
+- Added `[...]` to the end of the roles list if you match all, but still more.
+
+## Version 0.1.14
 - More hero fixes.
 - Added tooltips on some stats.
 
