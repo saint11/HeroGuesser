@@ -490,7 +490,7 @@ document.addEventListener("DOMContentLoaded", () => {
         stats += compareText(guessHero.weapon_type, chosenHero.weapon_type, guessDiv.querySelector('#weapon_type'));
         stats += compareArrayIndividual(guessHero.roles, chosenHero.roles, guessDiv.querySelector('#roles'));
         stats += compareAttack(guessHero.attack_range, chosenHero.attack_range, guessHero.attack_type, chosenHero.attack_type, guessDiv.querySelector('#attack_range'));
-        stats += compareNumber(guessHero.armor, chosenHero.armor, guessDiv.querySelector('#armor'));
+        stats += compareNumber((guessHero.base_armor + guessHero.base_agi * 0.167).toFixed(1), (chosenHero.base_armor + chosenHero.base_agi * 0.167).toFixed(1), guessDiv.querySelector('#armor'));
         stats += compareNumber(guessHero.move_speed, chosenHero.move_speed, guessDiv.querySelector('#move_speed'));
         stats += compareNumber(guessHero.legs, chosenHero.legs, guessDiv.querySelector('#legs'));
 

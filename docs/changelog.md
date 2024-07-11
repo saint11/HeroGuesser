@@ -1,5 +1,8 @@
 # Patch Notes
 
+## Version 0.2.1
+- Fixed bug on armor comparison
+
 ## Version 0.2
 - Changed stat **base armor** to **armor**. Now showing the armor on level 1.
 - Made wrong roles show up in red instead of yellow.
