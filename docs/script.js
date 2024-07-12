@@ -1,6 +1,6 @@
-import { submitFeedback } from './api.js';
+import { submitFeedback, submitGuesses, getWorldStats } from './api.js';
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
   const heroInput = document.getElementById("hero-input");
   const suggestions = document.getElementById("suggestions");
@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const randomHeroButton = document.getElementById("random-hero-button");
   const instructions = document.getElementById("instructions");
   const feedbackTitle = document.getElementById('feedback-title');
+  const worldStats = document.getElementById('world-stats');
 
   const gamelink = "https://saint11.github.io/HeroGuesser/";
 
@@ -25,6 +26,36 @@ document.addEventListener("DOMContentLoaded", () => {
   let seededRandom = -1;
   let heroReported = "None";
   let reportInitialized = false;
+  let guessCount = 0;
+  let worldInfo = {};
+
+  const urlParams = new URLSearchParams(window.location.search);
+  seededRandom = urlParams.get('random');
+
+  // Helper function to format numbers to 1 decimal place
+  function formatNumber(num) {
+    return parseFloat(Number(num).toFixed(1)).toString();
+  }
+
+  // show world stats, if available
+  const worldInfoData = await getWorldStats();
+  if (worldInfoData) {
+    worldInfo = worldInfoData[0];
+
+    if (seededRandom > 0 && worldInfo.player_count_random && worldInfo.average_guesses_random) { // Playing a random game
+      worldStats.innerHTML = `<p>${worldInfo.player_count_random} random games were played today! The average number of guesses was ${formatNumber(worldInfo.average_guesses_random)}.</p>`;
+    } else if (seededRandom < 0 && worldInfo.player_count_no_random && worldInfo.average_guesses_no_random) { // Playing a normal game
+      worldStats.innerHTML = `<p>${worldInfo.player_count_no_random} players guessed today, with an average of ${formatNumber(worldInfo.average_guesses_no_random)} guesses.</p>`;
+    } else {
+      console.log(worldInfo.player_count_no_random);
+      console.log(worldInfo.average_guesses_no_random);
+
+      worldStats.innerHTML = `<p>World stats are currently unavailable. Sorry!</p>`;
+    }
+  } else {
+    worldStats.remove();
+  }
+
 
   // Fetch hero data from the JSON file
   fetch('dota2_heroes.json')
@@ -186,9 +217,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       function chooseHero() {
-        const urlParams = new URLSearchParams(window.location.search);
-        seededRandom = urlParams.get('random');
-
         if (seededRandom > 0) {
           chosenHero = getHero(seededRandom);
 
@@ -199,20 +227,19 @@ document.addEventListener("DOMContentLoaded", () => {
           randomText.style.fontSize = "0.5em";
           randomText.style.color = "#888";
           title.appendChild(randomText);
-
-          console.log(chosenHero.localized_name);
-
         }
         else {
           chosenHero = chosenHero = getHero(getDayCountFrom2024());
         }
       }
 
-      function getLargeRandomInt(){
+      function getLargeRandomInt() {
         return Math.floor(Math.random() * 20000);
       }
 
       function addGuess(hero = null) {
+        guessCount++;
+
         // Disable input and button
         heroInput.disabled = true;
         guessButton.disabled = true;
@@ -299,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
           { id: "attack_range", label: "Attack Range", value: `${hero.attack_range} ${getAttackTypeIcon(hero.attack_type, chosenHero.attack_type)}` },
           { id: "armor", label: "Armor", value: (hero.base_armor + hero.base_agi * 0.167).toFixed(1), tooltip: "Armor at level 1 without any bonuses." },
           { id: "move_speed", label: "Move Speed", value: hero.move_speed },
-          { id: "legs", label: "Legs", value: hero.legs },
+          { id: "legs", label: "Legs", value: hero.legs, tooltip: "<ul><li>Legs do NOT count the mount.</li><li>Legs do NOT count hands, even if the hero stands on it.</li></ul>" },
         ];
 
         stats.forEach((stat, index) => {
@@ -600,21 +627,33 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       function compareNumber(guessValue, actualValue, div) {
+        let difference = Math.abs(guessValue - actualValue);
+        let result = '🟥';
+
         if (div) {
-          if (guessValue === actualValue) {
+          // Close enough
+          if (difference < 0.001) {
             div.classList.add("correct");
-            return '🟩';
-          } else if (guessValue > actualValue) {
-            div.classList.add("incorrect");
-            div.innerHTML += ` ⬇️`;
-            return '🟥';
+            result = '🟩';
           } else {
-            div.classList.add("incorrect");
-            div.innerHTML += ` ⬆️`;
-            return '🟥';
+            // Close call
+            if (difference < 0.6) {
+              div.classList.add("partial");
+            }
+            else {
+              div.classList.add("incorrect");
+            }
+            if (guessValue > actualValue) {
+              div.innerHTML += ` ⬇️`;
+            } else {
+              div.classList.add("incorrect");
+              div.innerHTML += ` ⬆️`;
+            }
+
           }
         }
-        return '🟥';
+
+        return result;
       }
 
       function getHeroIconImgTag(hero) {
@@ -662,7 +701,23 @@ document.addEventListener("DOMContentLoaded", () => {
         // Add the message with the link
         const shareMessage = document.createElement("p");
         if (gg) {
-          shareMessage.innerHTML = `GG! You gave up!`;
+
+          const giveUpMessages = [
+            "GG! You gave up!",
+            "GG! Maybe try again with Aegis next time!",
+            // TODO: Add more messages
+          ];
+
+          // Select a random message
+          const randomIndex = Math.floor(Math.random() * giveUpMessages.length);
+          let shareMessageContent = giveUpMessages[randomIndex];
+
+          if (worldInfo) {
+            shareMessageContent += ` But don't worry, ${worldInfo.player_count_gave_up} others also gave up today!`;
+          }
+
+          shareMessage.innerHTML = shareMessageContent;
+
         }
         else {
           shareMessage.innerHTML = `You guessed today's Dota 2 hero!`;
@@ -680,11 +735,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Show the random hero button
         randomHeroButton.style.display = 'block';
+
+        const guessData = {
+          random: (seededRandom > 0),
+          guesses: guessCount,
+          gaveUp: gg
+        };
+        submitGuesses(guessData)
+          .then(response => console.log(response))
+          .catch(error => console.error(error));
       }
 
       function copyToClipboard(container) {
         let guessText = "";
-        if (seededRandom>0) {
+        if (seededRandom > 0) {
           if (!gg) {
             guessText = `I guessed a random Dota 2 hero!\nttps://saint11.github.io/HeroGuesser/?random=${getLargeRandomInt()}`;
           }

@@ -2,6 +2,8 @@
 
 Welcome to Hero Guesser! This is an open-source fan project inspired by the popular word game Wordle, but featuring Dota 2 heroes.
 
+Currently live here: [https://saint11.github.io/HeroGuesser/](https://saint11.github.io/HeroGuesser/)
+
 Originally inspired by playing [Dotadle](https://dotadle.net/) and wanting different stats (and for it to be open source with no ads).
 
 **Disclaimer: This is a fan-made project. I do not own any Dota 2 related images or the name Dota 2. All rights to the Dota 2 images and name belong to their respective owners. If you are the owner and wish for this project to be taken down, please contact me at [contact@saint11.org](mailto:contact@saint11.org).**

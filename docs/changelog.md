@@ -1,7 +1,11 @@
 # Patch Notes
 
+## Version 0.2.2
+- Added world stats!
+- Added a little icon
+
 ## Version 0.2.1
-- Fixed bug on armor comparison
+- Fixed bug on armor comparison.
 
 ## Version 0.2
 - Changed stat **base armor** to **armor**. Now showing the armor on level 1.

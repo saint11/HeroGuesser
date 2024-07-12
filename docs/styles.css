@@ -1,9 +1,9 @@
 :root {
   --background-color: #2e2e2e;
   --text-color: #ffffff;
-  --primary-color: #a47462;
-  --secondary-color: #c46350;
-  --faded-color: #6b5a57;
+  --primary-color: #b76f55;
+  --secondary-color: #e4644a;
+  --faded-color: #5d748b;
   --hover-color: #fe9d3b;
   --highlight-color: #50FA7B;
   --partial-match-color: #FFB86C;
@@ -24,11 +24,19 @@ body {
 }
 
 .top-bar {
+  display: flex;
   background-color: var(--faded-color);
   width: 100%;
   text-align: center;
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 10px;display: flex;
+  align-items: center;
+  justify-content: center;  
+  gap: 10px;
+}
+
+.top-bar img.logo {
+  margin-right: 10px;
 }
 
 h1 {
@@ -478,4 +486,15 @@ textarea#feedback {
 
 .tooltiptext li {
   margin-bottom: 5px;
+}
+
+.inline-svg {
+  display: inline-block;
+  vertical-align: middle;
+  height: 1em; /* Ensures the SVG is not taller than the text */
+}
+
+#world-stats p {
+  font-size: 0.9 em;
+  color: var(--faded-color);
 }
