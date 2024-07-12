@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let guessCount = 0;
   let worldInfo = {};
   let current_day = 0;
-
+  
   const urlParams = new URLSearchParams(window.location.search);
   seededRandom = urlParams.get('random');
 
@@ -823,7 +823,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const worldInfoData = await getWorldStats(current_day);
 
       if (worldInfoData) {
-        const worldInfo = worldInfoData[0];
+        worldInfo = worldInfoData[0];
 
         if (seededRandom > 0 && worldInfo.player_count_random && worldInfo.average_guesses_random) { // Playing a random game
           worldStats.innerHTML = `<p>${worldInfo.player_count_random} random games were played today! The average number of guesses was ${formatNumber(worldInfo.average_guesses_random)}.</p>`;

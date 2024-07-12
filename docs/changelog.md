@@ -4,6 +4,7 @@
 - Some changes on the day choosing algorithm
 - Better world stats handling
 - Major improvements on random hero choice
+- Small CSS fix for small devices
 
 ## Version 0.2.2
 - Added world stats!
