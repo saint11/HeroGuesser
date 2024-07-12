@@ -1,5 +1,8 @@
 # Patch Notes
 
+## Version 0.2.4
+- Feedback systems are back up now
+
 ## Version 0.2.3
 - Some changes on the day choosing algorithm
 - Better world stats handling

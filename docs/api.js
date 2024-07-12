@@ -1,6 +1,7 @@
 export async function submitFeedback(data) {
     try {
         const API_URL = "https://n8n.coldblood.games/webhook/heroGuesser/feedback";
+        // const API_URL = "https://n8n.coldblood.games/webhook-test/feedback";
 
         const response = await fetch(API_URL, {
             method: 'POST',
@@ -25,13 +26,14 @@ export async function submitGuesses(data) {
     try {
         // const API_URL = "https://n8n.coldblood.games/webhook-test/heroGuesser/guessed";
         const API_URL = "https://n8n.coldblood.games/webhook/heroGuesser/guessed";
+        
         const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
         const lastSubmissionDate = localStorage.getItem('lastSubmissionDate');
 
         // Check if data was already sent today
         if (!data.random && lastSubmissionDate === today) {
-            // console.log
-            // return 'Already submitted today';
+            console.log
+            return 'Already submitted today';
         }
 
         // Make the POST request
