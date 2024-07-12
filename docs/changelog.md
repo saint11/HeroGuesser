@@ -1,5 +1,10 @@
 # Patch Notes
 
+## Version 0.2.3
+- Some changes on the day choosing algorithm
+- Better world stats handling
+- Major improvements on random hero choice
+
 ## Version 0.2.2
 - Added world stats!
 - Added a little icon

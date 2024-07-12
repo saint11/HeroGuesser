@@ -9,7 +9,7 @@ export async function submitFeedback(data) {
             },
             body: JSON.stringify(data)
         });
-        
+
         if (response.ok) {
             return 'Feedback submitted!';
         } else {
@@ -23,14 +23,15 @@ export async function submitFeedback(data) {
 
 export async function submitGuesses(data) {
     try {
+        // const API_URL = "https://n8n.coldblood.games/webhook-test/heroGuesser/guessed";
         const API_URL = "https://n8n.coldblood.games/webhook/heroGuesser/guessed";
         const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
         const lastSubmissionDate = localStorage.getItem('lastSubmissionDate');
 
         // Check if data was already sent today
         if (!data.random && lastSubmissionDate === today) {
-            console.log
-            return 'Already submitted today';
+            // console.log
+            // return 'Already submitted today';
         }
 
         // Make the POST request
@@ -54,14 +55,16 @@ export async function submitGuesses(data) {
     }
 }
 
-export async function getWorldStats() {
+export async function getWorldStats(current_day) {
     try {
+        // const API_URL = "https://n8n.coldblood.games/webhook-test/heroGuesser/totals"
         const API_URL = "https://n8n.coldblood.games/webhook/heroGuesser/totals";
 
         const response = await fetch(API_URL, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'day': current_day
             }
         });
 

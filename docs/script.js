@@ -1,4 +1,5 @@
 import { submitFeedback, submitGuesses, getWorldStats } from './api.js';
+import { getDayCountFrom2024, getHoursUntilNextDay, formatNumber } from './calc.js'
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -29,14 +30,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let reportInitialized = false;
   let guessCount = 0;
   let worldInfo = {};
+  let current_day = 0;
 
   const urlParams = new URLSearchParams(window.location.search);
   seededRandom = urlParams.get('random');
 
-  // Helper function to format numbers to 1 decimal place
-  function formatNumber(num) {
-    return parseFloat(Number(num).toFixed(1)).toString();
-  }
+  // Before anything, get the current day
+  current_day = getDayCountFrom2024() - 185;
 
   // show world stats, if available
   fetchWorldStats();
@@ -158,15 +158,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // Helper function to get the day count from January 1st, 2024
-      function getDayCountFrom2024() {
-        const startDate = new Date("2024-01-01");
-        const today = new Date();
-        const timeDiff = today - startDate;
-        const dayCount = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-        return dayCount;
-      }
-
       // Linear Congruential Generator (LCG)
       function LCG(seed) {
         const a = 1664525;
@@ -176,48 +167,53 @@ document.addEventListener("DOMContentLoaded", () => {
         return seed;
       }
 
+      // Fisher-Yates Shuffle
+      function shuffle(array, seed) {
+        let m = array.length, t, i;
+        while (m) {
+          seed = LCG(seed);
+          i = Math.floor((seed / m) % m);
+          m--;
+          t = array[m];
+          array[m] = array[i];
+          array[i] = t;
+        }
+        return array;
+      }
+
       // Function to get a hero deterministically
       function getHero(seed) {
-        // Generate the random index without shuffling
-        let indices = [];
-        for (let i = 0; i < heroes.length; i++) {
-          seed = LCG(seed);
-          indices.push(seed % heroes.length);
-        }
+        seed += 124;
+        // Generate an array of hero indices
+        let indices = Array.from({ length: heroes.length }, (_, i) => i);
 
-        // Remove duplicates to ensure all heroes are chosen once
-        indices = [...new Set(indices)];
-
-        // If all heroes have been chosen, start over with the remaining days
-        if (indices.length < heroes.length) {
-          for (let i = 0; i < heroes.length; i++) {
-            if (!indices.includes(i)) {
-              indices.push(i);
-            }
-          }
-        }
+        // Shuffle the indices using the seed
+        indices = shuffle(indices, seed);
 
         // Get the hero for the current day
         const todayIndex = seed % heroes.length;
         const chosenHero = heroes[indices[todayIndex]];
+        console.log(chosenHero);
         return chosenHero;
       }
 
       function chooseHero() {
+        const title = document.querySelector("h1");
+        const randomText = document.createElement("div");
+        randomText.textContent = "(random!)";
+        randomText.style.fontSize = "0.5em";
+        randomText.style.color = "#8AD";
         if (seededRandom > 0) {
           chosenHero = getHero(seededRandom);
 
-          // Add "(random!)" text under the title
-          const title = document.querySelector("h1");
-          const randomText = document.createElement("div");
           randomText.textContent = "(random!)";
-          randomText.style.fontSize = "0.5em";
-          randomText.style.color = "#888";
-          title.appendChild(randomText);
         }
         else {
-          chosenHero = chosenHero = getHero(getDayCountFrom2024());
+          chosenHero = chosenHero = getHero(current_day);
+          randomText.textContent = `Day #${current_day} (${getHoursUntilNextDay().toFixed(0)} hours left)`;
         }
+
+        title.appendChild(randomText);
       }
 
       function getLargeRandomInt() {
@@ -726,7 +722,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const guessData = {
           random: (seededRandom > 0),
           guesses: guessCount,
-          gaveUp: gg
+          gaveUp: gg,
+          day: current_day
         };
         submitGuesses(guessData)
           .then(response => console.log(response))
@@ -820,29 +817,29 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(error => console.error('Error fetching hero data:', error));
 
-    
-async function fetchWorldStats() {
-  try {
-      const worldInfoData = await getWorldStats();
-      
-      if (worldInfoData) {
-          const worldInfo = worldInfoData[0];
 
-          if (seededRandom > 0 && worldInfo.player_count_random && worldInfo.average_guesses_random) { // Playing a random game
-              worldStats.innerHTML = `<p>${worldInfo.player_count_random} random games were played today! The average number of guesses was ${formatNumber(worldInfo.average_guesses_random)}.</p>`;
-          } else if (!seededRandom && worldInfo.player_count_no_random && worldInfo.average_guesses_no_random) { // Playing a normal game
-              worldStats.innerHTML = `<p>${worldInfo.player_count_no_random} players guessed today, with an average of ${formatNumber(worldInfo.average_guesses_no_random)} guesses.</p>`;
-          } else {
-              console.log(worldInfo);
-              worldStats.innerHTML = `<p>World stats are currently unavailable. Sorry!</p>`;
-          }
+  async function fetchWorldStats() {
+    try {
+      const worldInfoData = await getWorldStats(current_day);
+
+      if (worldInfoData) {
+        const worldInfo = worldInfoData[0];
+
+        if (seededRandom > 0 && worldInfo.player_count_random && worldInfo.average_guesses_random) { // Playing a random game
+          worldStats.innerHTML = `<p>${worldInfo.player_count_random} random games were played today! The average number of guesses was ${formatNumber(worldInfo.average_guesses_random)}.</p>`;
+        } else if (!seededRandom && worldInfo.player_count_no_random && worldInfo.average_guesses_no_random) { // Playing a normal game
+          worldStats.innerHTML = `<p>${worldInfo.player_count_no_random} players guessed today, with an average of ${formatNumber(worldInfo.average_guesses_no_random)} guesses.</p>`;
+        } else {
+          console.log(worldInfo);
+          worldStats.innerHTML = `<p>World stats are currently unavailable. Sorry!</p>`;
+        }
       } else {
-          worldStats.remove();
+        worldStats.remove();
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Error fetching world stats:', error);
       worldStats.innerHTML = `<p>World stats are currently unavailable due to an error. Sorry!</p>`;
+    }
   }
-}
 });
 
