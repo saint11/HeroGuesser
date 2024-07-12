@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (seededRandom > 0 && worldInfo.player_count_random && worldInfo.average_guesses_random) { // Playing a random game
       worldStats.innerHTML = `<p>${worldInfo.player_count_random} random games were played today! The average number of guesses was ${formatNumber(worldInfo.average_guesses_random)}.</p>`;
-    } else if (seededRandom < 0 && worldInfo.player_count_no_random && worldInfo.average_guesses_no_random) { // Playing a normal game
+    } else if (!seededRandom && worldInfo.player_count_no_random && worldInfo.average_guesses_no_random) { // Playing a normal game
       worldStats.innerHTML = `<p>${worldInfo.player_count_no_random} players guessed today, with an average of ${formatNumber(worldInfo.average_guesses_no_random)} guesses.</p>`;
     } else {
       console.log(worldInfo);
