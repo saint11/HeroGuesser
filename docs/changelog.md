@@ -1,6 +1,6 @@
 # Patch Notes
 
-## Version 0.2.4
+## Latest News
 - Feedback systems are back up now
 
 ## Version 0.2.3
