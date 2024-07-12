@@ -1,6 +1,6 @@
 import { submitFeedback, submitGuesses, getWorldStats } from './api.js';
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
 
   const heroInput = document.getElementById("hero-input");
   const suggestions = document.getElementById("suggestions");
@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const guessesContainer = document.getElementById("guesses");
   const resultContainer = document.getElementById("results");
   const randomHeroButton = document.getElementById("random-hero-button");
+  const randomHeroButtonIntro = document.getElementById("random-hero-button-intro");
   const instructions = document.getElementById("instructions");
   const feedbackTitle = document.getElementById('feedback-title');
   const worldStats = document.getElementById('world-stats');
@@ -38,22 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // show world stats, if available
-  const worldInfoData = await getWorldStats();
-  if (worldInfoData) {
-    worldInfo = worldInfoData[0];
-
-    if (seededRandom > 0 && worldInfo.player_count_random && worldInfo.average_guesses_random) { // Playing a random game
-      worldStats.innerHTML = `<p>${worldInfo.player_count_random} random games were played today! The average number of guesses was ${formatNumber(worldInfo.average_guesses_random)}.</p>`;
-    } else if (!seededRandom && worldInfo.player_count_no_random && worldInfo.average_guesses_no_random) { // Playing a normal game
-      worldStats.innerHTML = `<p>${worldInfo.player_count_no_random} players guessed today, with an average of ${formatNumber(worldInfo.average_guesses_no_random)} guesses.</p>`;
-    } else {
-      console.log(worldInfo);
-      worldStats.innerHTML = `<p>World stats are currently unavailable. Sorry!</p>`;
-    }
-  } else {
-    worldStats.remove();
-  }
-
+  fetchWorldStats();
 
   // Fetch hero data from the JSON file
   fetch('dota2_heroes.json')
@@ -62,6 +48,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       heroes = data;
       chooseHero();
 
+      randomHeroButtonIntro.addEventListener("click", () => {
+        window.location.href = `${window.location.pathname}?random=${getLargeRandomInt()}`;
+      });
       randomHeroButton.addEventListener("click", () => {
         window.location.href = `${window.location.pathname}?random=${getLargeRandomInt()}`;
       });
@@ -831,4 +820,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     })
     .catch(error => console.error('Error fetching hero data:', error));
 
+    
+async function fetchWorldStats() {
+  try {
+      const worldInfoData = await getWorldStats();
+      
+      if (worldInfoData) {
+          const worldInfo = worldInfoData[0];
+
+          if (seededRandom > 0 && worldInfo.player_count_random && worldInfo.average_guesses_random) { // Playing a random game
+              worldStats.innerHTML = `<p>${worldInfo.player_count_random} random games were played today! The average number of guesses was ${formatNumber(worldInfo.average_guesses_random)}.</p>`;
+          } else if (!seededRandom && worldInfo.player_count_no_random && worldInfo.average_guesses_no_random) { // Playing a normal game
+              worldStats.innerHTML = `<p>${worldInfo.player_count_no_random} players guessed today, with an average of ${formatNumber(worldInfo.average_guesses_no_random)} guesses.</p>`;
+          } else {
+              console.log(worldInfo);
+              worldStats.innerHTML = `<p>World stats are currently unavailable. Sorry!</p>`;
+          }
+      } else {
+          worldStats.remove();
+      }
+  } catch (error) {
+      console.error('Error fetching world stats:', error);
+      worldStats.innerHTML = `<p>World stats are currently unavailable due to an error. Sorry!</p>`;
+  }
+}
 });
+
