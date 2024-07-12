@@ -47,9 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else if (seededRandom < 0 && worldInfo.player_count_no_random && worldInfo.average_guesses_no_random) { // Playing a normal game
       worldStats.innerHTML = `<p>${worldInfo.player_count_no_random} players guessed today, with an average of ${formatNumber(worldInfo.average_guesses_no_random)} guesses.</p>`;
     } else {
-      console.log(worldInfo.player_count_no_random);
-      console.log(worldInfo.average_guesses_no_random);
-
+      console.log(worldInfo);
       worldStats.innerHTML = `<p>World stats are currently unavailable. Sorry!</p>`;
     }
   } else {
