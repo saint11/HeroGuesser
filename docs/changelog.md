@@ -1,7 +1,7 @@
 # Patch Notes
 
 ## Latest News
-- Feedback systems are back up now
+- Report hero system is working again
 
 ## Version 0.2.4
 - Fixed day skipping to the next at night (it should only change days at midnight).
