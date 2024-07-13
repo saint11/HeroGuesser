@@ -1,5 +1,5 @@
 import { submitFeedback, submitGuesses, getWorldStats } from './api.js';
-import { getDayCountFrom2024, getHoursUntilNextDay, formatNumber } from './calc.js'
+import { getDayCountFromCreation, getHoursUntilNextDay, formatNumber } from './calc.js'
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   seededRandom = urlParams.get('random');
 
   // Before anything, get the current day
-  current_day = getDayCountFrom2024() - 185;
+  current_day = getDayCountFromCreation();
 
   // show world stats, if available
   fetchWorldStats();
@@ -741,10 +741,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         else {
           if (!gg) {
-            guessText = `I guessed today's Dota 2 hero!\nhttps://saint11.github.io/HeroGuesser/`;
+            guessText = `I guessed day ${current_day} Dota 2 hero!\nhttps://saint11.github.io/HeroGuesser/`;
           }
           else {
-            guessText = `I gave up guessing today's Dota 2 hero!\nhttps://saint11.github.io/HeroGuesser/`;
+            guessText = `I gave up guessing day ${current_day} Dota 2 hero!\nhttps://saint11.github.io/HeroGuesser/`;
           }
         }
 
@@ -823,7 +823,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (worldInfoData) {
         worldInfo = worldInfoData[0];
-        console.log(worldInfo);
         if (seededRandom > 0 && worldInfo.player_count_random && worldInfo.average_guesses_random) { // Playing a random game
           worldStats.innerHTML = `<p>${worldInfo.player_count_random} random games were played today! The average number of guesses was ${formatNumber(worldInfo.average_guesses_random)}.</p>`;
         } else if (!seededRandom && worldInfo.player_count_no_random && worldInfo.average_guesses_no_random) { // Playing a normal game

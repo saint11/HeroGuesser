@@ -1,13 +1,18 @@
 
-// Helper function to get the day count from January 1st, 2024
-export function getDayCountFrom2024() {
-    const startDate = new Date("2024-01-01");
+// Helper function to get the day count from July 4th, 2024
+export function getDayCountFromCreation() {
+    const startDate = new Date("2024-07-04T00:00:00");
     const today = new Date();
-    const timeDiff = today - startDate;
-    const dayCount = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-    return dayCount;
+
+    // Calculate the difference in milliseconds
+    const diffTime = Math.abs(today -startDate);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    return diffDays;
 }
 
+
+// Get how many hours are left in current day
 export function getHoursUntilNextDay() {
     const now = new Date();
     const nextDay = new Date(now);

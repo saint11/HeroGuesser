@@ -3,11 +3,15 @@
 ## Latest News
 - Feedback systems are back up now
 
+## Version 0.2.4
+- Fixed day skipping to the next at night (it should only change days at midnight).
+- Copying text now includes the current day.
+
 ## Version 0.2.3
-- Some changes on the day choosing algorithm
-- Better world stats handling
-- Major improvements on random hero choice
-- Small CSS fix for small devices
+- Some changes on the day choosing algorithm.
+- Better world stats handling.
+- Major improvements on random hero choice.
+- Small CSS fix for small devices.
 
 ## Version 0.2.2
 - Added world stats!
