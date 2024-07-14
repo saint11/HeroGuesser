@@ -4,6 +4,8 @@
   --primary-color: #b76f55;
   --secondary-color: #e4644a;
   --faded-color: #5d748b;
+  --faded-button-color: #e4644a;
+  --faded-button-hover-color: #fe9d3b;
   --hover-color: #fe9d3b;
   --highlight-color: #50FA7B;
   --partial-match-color: #FFB86C;
@@ -234,15 +236,32 @@ h1 {
   margin: 5px;
 }
 
+#daily-button {
+  margin-top: 5px;
+  padding: 5px 5px;
+  font-size: 0.8em;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--faded-button-color);
+  color: var(--text-color);
+  cursor: pointer;
+}
+#daily-button:hover {
+  background-color: var(--faded-button-hover-color);
+}
+
 .random-hero-button {
   margin-top: 10px;
   padding: 5px 10px;
   font-size: 0.9em;
   border: none;
   border-radius: 5px;
-  background-color: var(--primary-color);
+  background-color: var(--faded-button-color);
   color: var(--text-color);
   cursor: pointer;
+}
+.random-hero-button:hover {
+  background-color: var(--faded-button-hover-color);
 }
 
 .copy-button {
@@ -322,9 +341,12 @@ button#changelog-button {
   font-size: 0.9em;
   border: none;
   border-radius: 5px;
-  background-color: var(--primary-color);
+  background-color: var(--faded-button-color);
   color: var(--text-color);
   cursor: pointer;
+}
+button#changelog-button:hover {
+  background-color: var(--faded-button-hover-color);
 }
 
 #changelog-content {
@@ -498,4 +520,7 @@ textarea#feedback {
 #world-stats p {
   font-size: 0.9 em;
   color: var(--faded-color);
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 0px;
 }

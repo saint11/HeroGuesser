@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let guessCount = 0;
   let worldInfo = {};
   let current_day = 0;
-  
+
   const urlParams = new URLSearchParams(window.location.search);
   seededRandom = urlParams.get('random');
 
@@ -198,21 +198,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
       function chooseHero() {
         const title = document.querySelector("h1");
-        const randomText = document.createElement("div");
-        randomText.textContent = "(random!)";
-        randomText.style.fontSize = "0.5em";
-        randomText.style.color = "#8AD";
+        const subtitle = document.createElement("div");
+        subtitle.textContent = "(random!)";
+        subtitle.style.fontSize = "0.5em";
+        subtitle.style.color = "#8AD";
+
         if (seededRandom > 0) {
           chosenHero = getHero(seededRandom);
+          subtitle.textContent = "Random Match! ";
+          const backToDaily = document.createElement("button");
+          backToDaily.id = "daily-button";
+          backToDaily.textContent = "play daily match instead"
+          backToDaily.addEventListener("click", () => {
+            window.location.href = `https://saint11.github.io/HeroGuesser/`;
+          });
 
-          randomText.textContent = "(random!)";
+          subtitle.appendChild(backToDaily);
+
+          const alreadyGuessed = document.getElementById("already-guessed");
+          alreadyGuessed.remove();
         }
         else {
           chosenHero = chosenHero = getHero(current_day);
-          randomText.textContent = `Day #${current_day} (${getHoursUntilNextDay().toFixed(0)} hours left)`;
+          subtitle.textContent = `Day #${current_day} (${getHoursUntilNextDay().toFixed(0)} hours left)`;
         }
 
-        title.appendChild(randomText);
+        title.appendChild(subtitle);
       }
 
       function getLargeRandomInt() {
@@ -827,6 +838,21 @@ document.addEventListener("DOMContentLoaded", () => {
           worldStats.innerHTML = `<p>${worldInfo.player_count_random} random games were played today! The average number of guesses was ${formatNumber(worldInfo.average_guesses_random)}.</p>`;
         } else if (!seededRandom && worldInfo.player_count_no_random && worldInfo.average_guesses_no_random) { // Playing a normal game
           worldStats.innerHTML = `<p>${worldInfo.player_count_no_random} players guessed today, with an average of ${formatNumber(worldInfo.average_guesses_no_random)} guesses.</p>`;
+
+          const lastSubmissionDate = localStorage.getItem('lastSubmissionDate');
+          const guesses = localStorage.getItem('lastSubmissionGuessCount');
+          if (lastSubmissionDate == current_day) {
+            if (guesses > 1) {
+              worldStats.innerHTML += `<p>You got it in ${guesses} guesses</p>`;
+            }
+            if (guesses > 0) {
+              worldStats.innerHTML += `<p>You got it in your first guess! That was lucky.</p>`;
+            }
+            else {
+              worldStats.innerHTML += `<p>You already guessed today!</p>`;
+            }
+          }
+
         } else {
           console.log(worldInfo);
           worldStats.innerHTML = `<p>World stats are currently unavailable. Sorry!</p>`;

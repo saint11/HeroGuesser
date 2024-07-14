@@ -1,7 +1,7 @@
 # Patch Notes
 
-## Latest News
-- Report hero system is working again
+## Version 0.2.5
+- Improved random button placement and tried to make it clearer of which mode is being played.
 
 ## Version 0.2.4
 - Fixed day skipping to the next at night (it should only change days at midnight).

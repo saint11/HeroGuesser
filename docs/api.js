@@ -27,7 +27,7 @@ export async function submitGuesses(data) {
         // const API_URL = "https://n8n.coldblood.games/webhook-test/heroGuesser/guessed";
         const API_URL = "https://n8n.coldblood.games/webhook/heroGuesser/guessed";
         
-        const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+        const today = data.day;
         const lastSubmissionDate = localStorage.getItem('lastSubmissionDate');
 
         // Check if data was already sent today
@@ -46,7 +46,8 @@ export async function submitGuesses(data) {
         });
 
         if (response.ok) {
-            localStorage.setItem('lastSubmissionDate', today); // Store the submission date
+            localStorage.setItem('lastSubmissionDate', data.day); // Store the submission date
+            localStorage.setItem('lastSubmissionGuessCount', data.guesses); // Store the guess count
             return 'Guesses submitted!';
         } else {
             throw new Error(response.statusText);

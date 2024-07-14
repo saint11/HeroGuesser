@@ -6,11 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hero Guesser</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 </head>
 
 
@@ -20,7 +21,9 @@
             <img src="favicon.png" alt="Logo">
             <h1>Dota 2 Hero Guesser!</h1>
         </div>
-        <div id="world-stats"><p>Loading stats...</p></div>
+        <div id="world-stats">
+            <p>Loading stats...</p>
+        </div>
 
         <div id="guesses"></div>
 
@@ -48,14 +51,16 @@
             <p>Legs do NOT count hands, even if the hero stands on it. If it has opposing thumbs, it doesn't count.</p>
             <p>Good luck, have fun!</p>
             <p><br></p>
-            <p>Already guessed today's hero?</p>
-            <p><button id="random-hero-button-intro" class="random-hero-button" >Try a Random One!</button></p>
+            <span id="already-guessed">
+                <p>Already guessed today's hero?</p>
+                <p><button id="random-hero-button-intro" class="random-hero-button">Try a Random One!</button></p>
+            </span>
         </div>
-        
+
         <div id="global-tooltip" class="tooltiptext"></div>
     </div>
     <footer>
-        <p><button id="changelog-button">Show Patch Notes</button> Version 0.2.3 - <a
+        <p><button id="changelog-button">Show Patch Notes</button> Version 0.2.4 - <a
                 href="https://github.com/saint11/HeroGuesser/" target="_blank">GitHub</a> - Open Source, made by <a
                 href="https://saint11.org">Saint11</a> </p>
 
@@ -77,7 +82,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
-    
+
     <script type="module" src="script.js"></script>
 </body>
 
