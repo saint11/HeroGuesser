@@ -845,7 +845,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (guesses > 1) {
               worldStats.innerHTML += `<p>You got it in ${guesses} guesses</p>`;
             }
-            if (guesses > 0) {
+            else if (guesses > 0) {
               worldStats.innerHTML += `<p>You got it in your first guess! That was lucky.</p>`;
             }
             else {
